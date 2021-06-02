@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //  END SEND FORM
 
 
-    fetch('http://api.openweathermap.org/data/2.5/weather?id=703448&lang=en&units=metric&appid=2341cdb94950ef399940a9aee51bcec0')
+    fetch('https://api.openweathermap.org/data/2.5/weather?id=703448&lang=en&units=metric&appid=2341cdb94950ef399940a9aee51bcec0')
         .then(function (resp) { return resp.json() })
         .then(function (data) {
             document.querySelector('.weather__block.city').textContent = data.name;
