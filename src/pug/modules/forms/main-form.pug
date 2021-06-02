@@ -1,17 +1,17 @@
 mixin inputBlock(labelText, type, name, placeholder)
     label.main-form__label=labelText
-    input(type=type,name=name,placeholder=placeholder,autocomplete='on').main-form__input
-    .main-form__error
+    input(type=type,name=name,placeholder=placeholder,data-validate-field=name,autocomplete='on').main-form__input
+    .js-validate-error-label
 
 mixin autoLoginLink(href, img, text)
     a(href=href,class="autoLogin__link")
         img(src=img)
         =text
 
-form.main-form
+form.main-form#main-form(method="POST")
     .main-form__title Log in to airSlate
-    +inputBlock('Email address','email','email','name@email.com')
-    +inputBlock('Password','password','password','Enter password')
+    +inputBlock('Email address','email','email','name@email.com','email')
+    +inputBlock('Password','password','password','Enter password','password')
     .main-form__privacy-policy.
         By clicking Log in, you agree to the #[a(href="/") Terms of Services] 
         and #[a(href="/") Privacy Policy], including receipt of emails from of us about our service.

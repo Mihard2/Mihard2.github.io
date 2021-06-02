@@ -2,68 +2,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //  SEND FORM
 
-    const forms = () => {
-        const form = document.querySelector('form'),
-            inputs = form.querySelectorAll('input.main-form__input');
+    let validateForms = (selector, rules) => {
+        new window.JustValidate(selector, {
+            rules: rules,
+            submitHandler: (form) => {
+                let formData = new FormData(form);
 
-        const postData = async (url, data) => {
-            let res = await fetch(url, {
-                method: 'POST',
-                body: data
-            });
+                let xhr = new XMLHttpRequest();
 
-            return await res.text();
-        }
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            for (let [name, value] of formData) {
+                                console.log(`${name} = ${value}`);
+                            }
+                        }
+                    }
+                }
 
-        const clearInputs = () => {
-            inputs.forEach(el => {
-                el.value = '';
-            })
-        }
+                xhr.open('POST', 'send.php', true);
+                xhr.send(formData);
 
-        function validateEmail(email) {
-            var re = /\S+@\S+\.\S+/;
-            return re.test(email);
-        }
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            // inputs.forEach(input => {
-            //     let val = input.value,
-            //         valErr = input.nextElementSibling;
-            //     if (val == '') {
-            //         input.classList.add('error');
-            //         valErr.textContent = 'This field is required';
-            //         return false;
-            //     } else if (input.type == 'email' && (validateEmail(input))) {
-            //         input.classList.add('error');
-            //         valErr.textContent = 'Enter a valid email';
-            //         return false;
-            //     } else {
-            //         return true;
-            //     }
-            // })
-
-            const formData = new FormData(form);
-
-            const pass = formData.get('password');
-            console.log(pass);
-
-
-            postData('send.php', formData)
-                .then(res => {
-                    console.log(res);
-                })
-                .catch(() => { })
-                .finally(() => {
-                    clearInputs();
-                })
+                form.reset();
+            }
         })
     }
 
-    forms();
+    validateForms('.main-form', { email: { required: true, email: true }, password: { required: true, minLength: 5 } });
+
 
     //  END SEND FORM
+
+
+    fetch('http://api.openweathermap.org/data/2.5/weather?id=703448&lang=en&units=metric&appid=2341cdb94950ef399940a9aee51bcec0')
+        .then(function (resp) { return resp.json() })
+        .then(function (data) {
+            document.querySelector('.weather__block.city').textContent = data.name;
+            document.querySelector('.weather__block.temp span').innerHTML = Math.round(data.main.temp) + '&deg;';
+            document.querySelector('.weather__block.desc').textContent = data.weather[0]['description'];
+            document.querySelector('.weather__block.humidity span').textContent = data.main.humidity;
+            document.querySelector('.weather__block.speed span').textContent = data.wind.speed;
+            document.querySelector('.weather__block.icon').innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0]['icon']}@2x.png">`;
+        })
+        .catch(function () {
+            document.querySelector('.weather__block.error').textContent = 'Sorry. Request error.';
+        });
 
 });
